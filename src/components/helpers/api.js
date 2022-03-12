@@ -27,9 +27,18 @@ export const getPlanets = async (url) => {
     name,
     orbital_period,
     population,
+    beloved: false,
     id: i,
   }));
 };
+
+export const planetsColumns = [
+  "name",
+  "orbital_period",
+  "population",
+  "beloved",
+  "id",
+];
 
 export const getStarships = async (url) => {
   const res = await (await fetch(url)).json();
@@ -37,15 +46,18 @@ export const getStarships = async (url) => {
     name,
     starship_class,
     passengers,
+    beloved: false,
     id: i,
   }));
 };
 
-export const getDataFromLS = (key) => JSON.parse(localStorage.getItem(key));
-
-export const saveInLS = (key, data) => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
+export const shipColumns = [
+  "name",
+  "starship_class",
+  "passengers",
+  "beloved",
+  "id",
+];
 
 export const getInitialData = (columns) => {
   return (
@@ -56,3 +68,7 @@ export const getInitialData = (columns) => {
     }, {})
   );
 };
+
+export function convertToBoolean(data) {
+  return data === "true" ? true : false;
+}

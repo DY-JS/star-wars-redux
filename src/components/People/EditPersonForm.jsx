@@ -1,23 +1,25 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 
-import { PeopleContext } from "../contexts/PeopleContext";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  getAllPeople,
+  getTableName,
+  getSelectedPerson,
+} from "../../store/selectors/people";
+
+import { editPerson } from "../../store/actions/people";
 import EditForm from "../common/EditForm";
-import { saveInLS } from "./../helpers/api";
 
 const EditPersonForm = () => {
-  const {
-    lsKey,
-    people,
-    tableName,
-    selectedPerson,
-    setSelectedPerson,
-    columns,
-    handleEditPersonData,
-  } = useContext(PeopleContext);
+  const dispatch = useDispatch();
+  const people = useSelector((state) => getAllPeople(state));
+  const tableName = useSelector((state) => getTableName(state));
+  const columns = people?.length ? Object.keys(people[0]) : [];
+  const selectedPerson = useSelector((state) => getSelectedPerson(state));
 
-  useEffect(() => {
-    return saveInLS(lsKey, people);
-  });
+  const handleEditPerson = (person) => {
+    dispatch(editPerson(person));
+  };
 
   return (
     <div>
@@ -25,9 +27,8 @@ const EditPersonForm = () => {
       <EditForm
         tableName={tableName}
         itemData={selectedPerson}
-        setItemData={setSelectedPerson}
         columns={columns}
-        onEditForm={handleEditPersonData}
+        onEditForm={handleEditPerson}
         buttonTitle="Update person data"
       />
     </div>

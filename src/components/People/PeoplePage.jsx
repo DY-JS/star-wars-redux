@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Button } from "react-bootstrap";
@@ -7,31 +7,26 @@ import {
   setPeople,
   deletePerson,
   changeBelovedStatus,
+  setSelectedPerson,
 } from "../../store/actions/people";
-import { getPeople, getInitialData, peopleColumns } from "./../helpers/api";
+import { getPeople } from "./../helpers/api";
 
 import Table from "../common/Table";
 import { getAllPeople, getTableName } from "../../store/selectors/people";
-import { PeopleContext } from "../contexts/PeopleContext";
 
 const PeoplePage = () => {
   const people = useSelector((state) => getAllPeople(state));
   const tableName = useSelector((state) => getTableName(state));
   const columns = people?.length ? Object.keys(people[0]) : [];
-  const initialData = getInitialData(columns);
-  const {
-    //tableName,
-    //people,
-    //setPeople,
-    //columns,
-    //handleDeletePerson,
-    setSelectedPerson,
-  } = useContext(PeopleContext);
   const dispatch = useDispatch();
   const url = "https://swapi.dev/api/people";
 
   const handleBelovedStatus = (id) => {
     dispatch(changeBelovedStatus(id));
+  };
+
+  const handleSelectPerson = (id) => {
+    dispatch(setSelectedPerson(id));
   };
 
   const handleDeletePerson = (id) => {
@@ -42,7 +37,7 @@ const PeoplePage = () => {
     const getData = async () => {
       const data = await getPeople(url);
       dispatch(setPeople(data));
-      console.log(data);
+      // console.log(data);
     };
     !people.length && getData();
   }, []);
@@ -58,12 +53,13 @@ const PeoplePage = () => {
       </div>
       {people.length ? (
         <Table
+          data={people}
           tableName={tableName}
           columns={columns}
           tableDescriptor="People"
           setBeloved={handleBelovedStatus}
           onDeleteData={handleDeletePerson}
-          setDataItem={setSelectedPerson}
+          setDataItem={handleSelectPerson}
         />
       ) : (
         <h1 className="col-10 mx-auto py-5 text-center">NO DATA ON PAGE</h1>

@@ -1,33 +1,45 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { getPlanets, getDataFromLS } from "./../helpers/api";
+import { useDispatch, useSelector } from "react-redux";
+import { getPlanets } from "./../helpers/api";
 
+import {
+  setPlanets,
+  deletePlanet,
+  changeBelovedStatus,
+  setSelectedPlanet,
+} from "../../store/actions/planets";
 import Table from "../common/Table";
-import { PlanetsContext } from "../contexts/PlanetsContext";
+import { getAllPlanets, getTableName } from "../../store/selectors/planets";
 
 const PlanetsPage = () => {
-  const {
-    lsKey,
-    tableName,
-    planets,
-    setPlanets,
-    columns,
-    handleDeletePlanet,
-    setSelectedPlanet,
-  } = useContext(PlanetsContext);
+  const planets = useSelector((state) => getAllPlanets(state));
+  const tableName = useSelector((state) => getTableName(state));
+  const columns = planets?.length ? Object.keys(planets[0]) : [];
 
+  const dispatch = useDispatch();
   const url = "https://swapi.dev/api/planets/";
 
-  const dataFromLS = getDataFromLS(lsKey);
+  const handleBelovedStatus = (id) => {
+    dispatch(changeBelovedStatus(id));
+  };
+
+  const handleSelectPlanet = (id) => {
+    dispatch(setSelectedPlanet(id));
+  };
+
+  const handleDeletePlanet = (id) => {
+    dispatch(deletePlanet(id));
+  };
 
   useEffect(() => {
     const getData = async () => {
       const data = await getPlanets(url);
+      dispatch(setPlanets(data));
       console.log(data);
-      setPlanets((current) => data);
     };
-    dataFromLS?.length > 0 ? setPlanets(dataFromLS) : getData();
+    !planets.length && getData();
   }, []);
 
   return (
@@ -44,12 +56,13 @@ const PlanetsPage = () => {
       </div>
       {planets.length ? (
         <Table
-          tableName={tableName}
           data={planets}
+          tableName={tableName}
           columns={columns}
           tableDescriptor="Planets"
+          setBeloved={handleBelovedStatus}
           onDeleteData={handleDeletePlanet}
-          setDataItem={setSelectedPlanet}
+          setDataItem={handleSelectPlanet}
         />
       ) : (
         <h1 className="col-10 mx-auto py-5 text-center">NO DATA ON PAGE</h1>

@@ -4,11 +4,14 @@ import {
   DELETE_PERSON,
   CHANGE_BELOVED_STATUS,
   ADD_PERSON,
+  SET_SELECTED_PERSON,
+  EDIT_PERSON,
 } from "../actions/people";
 
 const initialState = {
   allPeople: [],
   tableName: "people",
+  selectedPerson: null,
 };
 
 function people(state = initialState, action) {
@@ -36,6 +39,25 @@ function people(state = initialState, action) {
           return person.id === action.id
             ? { ...person, beloved: !person.beloved }
             : person;
+        }),
+      };
+    case SET_SELECTED_PERSON:
+      return {
+        ...state,
+        selectedPerson: state.allPeople.find(
+          (person) => person.id === action.id
+        ),
+      };
+
+    case EDIT_PERSON:
+      return {
+        ...state,
+        allPeople: state.allPeople.map((person) => {
+          const { name, height, mass, gender, beloved, id } = action.person;
+          if (person.id === id) {
+            return { ...person, name, height, mass, gender, beloved, id };
+          }
+          return person;
         }),
       };
 

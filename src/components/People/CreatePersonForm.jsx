@@ -1,38 +1,34 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-//import { PeopleContext } from "../contexts/PeopleContext";
 import { addPerson } from "../../store/actions/people";
 import { getTableName } from "../../store/selectors/people";
 import AddForm from "../common/AddForm";
 
 const CreatePersonForm = () => {
-  //const people = useSelector((state) => getAllPeople(state));
   const tableName = useSelector((state) => getTableName(state));
   const dispatch = useDispatch();
   const initialData = {
     name: "",
     height: "",
     mass: "",
-    gender: "",
+    gender: "male",
     birth_year: "",
-    beloved: "",
+    beloved: false,
     id: "",
   };
   const columns = Object.keys(initialData);
-
   const [newPerson, setNewPerson] = useState(initialData);
-  //const {
-  //initialData,
-  //columns,
-  //handleAddPerson,
-  // newPerson,
-  // setNewPerson,
-  //} = useContext(PeopleContext);
 
   const handleAddPerson = (newPerson) => {
     dispatch(addPerson(newPerson));
   };
+
+  useEffect(() => {
+    return () => {
+      setNewPerson({});
+    };
+  }, []);
 
   return (
     <div>

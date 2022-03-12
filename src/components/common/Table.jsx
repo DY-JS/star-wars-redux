@@ -1,25 +1,16 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
-import { getAllPeople } from "../../store/selectors/people";
 
 function Table({
   tableName,
-  //data,
+  data,
   columns,
   tableDescriptor,
   setBeloved,
   onDeleteData,
   setDataItem,
 }) {
-  const data = useSelector((state) => getAllPeople(state));
-  //console.log(data);
-  // const handleClick = (id) => {
-  //   const item = data.find((it) => it.id === id);
-  //   setDataItem(item);
-  // };
-
   return (
     <table className="table table-striped table-dark col-11 col-md-9 mx-auto">
       <thead>
@@ -40,7 +31,8 @@ function Table({
               return i === 0 ? (
                 <td
                   key={item[columnTitle] + columnTitle}
-                  //onClick={() => handleClick(item["id"])}
+                  onClick={() => setDataItem(item["id"])}
+                  //onClick={() => console.log(item["id"])}
                 >
                   <NavLink
                     to={`/${tableName}/${item["id"]}/edit`}

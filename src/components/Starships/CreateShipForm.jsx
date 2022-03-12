@@ -1,17 +1,34 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { StarshipsContext } from "../contexts/StarshipsContext";
+import { addShip } from "../../store/actions/ships";
+import { getTableName } from "../../store/selectors/ships";
 import AddForm from "../common/AddForm";
 
 const CreateShipForm = () => {
-  const {
-    tableName,
-    initialData,
-    columns,
-    handleAddShip,
-    newShip,
-    setNewShip,
-  } = useContext(StarshipsContext);
+  const tableName = useSelector((state) => getTableName(state));
+  const dispatch = useDispatch();
+  const initialData = {
+    name: "",
+    starship_class: "",
+    mass: "",
+    passengers: "",
+    beloved: false,
+    id: "",
+  };
+
+  const columns = Object.keys(initialData);
+  const [newShip, setNewShip] = useState(initialData);
+
+  const handleAddShip = (newShip) => {
+    dispatch(addShip(newShip));
+  };
+
+  useEffect(() => {
+    return () => {
+      setNewShip({});
+    };
+  }, []);
 
   return (
     <div>

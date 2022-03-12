@@ -1,33 +1,33 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 
-import { StarshipsContext } from "../contexts/StarshipsContext";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  getAllShips,
+  getTableName,
+  getSelectedShip,
+} from "../../store/selectors/ships";
+
+import { editShip } from "../../store/actions/ships";
 import EditForm from "../common/EditForm";
-import { saveInLS } from "./../helpers/api";
 
 const EditShipForm = () => {
-  const {
-    lsKey,
-    ships,
-    tableName,
-    selectedShip,
-    setSelectedShip,
-    columns,
-    handleEditShipData,
-  } = useContext(StarshipsContext);
+  const dispatch = useDispatch();
+  const ships = useSelector((state) => getAllShips(state));
+  const tableName = useSelector((state) => getTableName(state));
+  const columns = ships?.length ? Object.keys(ships[0]) : [];
+  const selectedShip = useSelector((state) => getSelectedShip(state));
 
-  useEffect(() => {
-    return saveInLS(lsKey, ships);
-  });
-
+  const handleEditShip = (ship) => {
+    dispatch(editShip(ship));
+  };
   return (
     <div>
       <h2 className="col-10 mx-auto py-2 text-center">EDIT PLANET DATA</h2>
       <EditForm
         tableName={tableName}
         itemData={selectedShip}
-        setItemData={setSelectedShip}
         columns={columns}
-        onEditForm={handleEditShipData}
+        onEditForm={handleEditShip}
         buttonTitle="Update Starship data"
       />
     </div>
